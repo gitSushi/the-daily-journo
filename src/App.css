@@ -1,38 +1,409 @@
-.App {
+@import url("https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Vollkorn+SC:wght@600;900&display=swap");
+
+* {
+  color: #30303b;
+  font-family: "Vollkorn SC", serif;
+  box-sizing: border-box;
+}
+
+/*
+ * #######
+ * App
+ * #######
+*/
+nav.title-nav {
+  display: grid;
+  grid-template-columns: 2fr, 1fr;
+}
+
+.ze-wall {
+  grid-column: 2 / 3;
+  justify-self: center;
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.ze-wall > h1 {
+  font-family: "Abril Fatface", cursive;
+  font-size: 2em;
+  margin: 0;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.ze-wall > p {
+  font-size: 0.8em;
+  margin-top: 0;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.class-btn {
+  grid-column: 3 / 4;
+  justify-self: end;
   display: flex;
-  flex-direction: column;
   align-items: center;
+}
+
+.Modal {
+  position: absolute;
+  top: 10%;
+  left: 6%;
+  right: 6%;
+  padding: 2.5% 2.5% 6%;
+  background-color: white;
+  border-radius: 6px;
+}
+
+.Overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.flex-row-form {
+  display: flex;
+  justify-content: space-between;
+}
+
+.flex-row-item:not(:last-child) {
+  padding-right: 8%;
+  border-right: 1px solid rgb(194, 194, 194);
+}
+
+.availability {
+  height: 18px;
+}
+
+.availability.is-available {
+  color: green;
+}
+
+.availability.not-available {
+  color: red;
+}
+
+.close {
+  color: #aaaaaa;
+  font-size: 3em;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+h2 {
+  font-size: 1.2em;
+  text-align: center;
+  color: #be4bdb;
+}
+
+.posts-wall {
+  max-width: 345px;
+  margin: 1em auto 0;
+}
+
+.post-block {
+  padding: 10px;
+  border: 1px solid #bbb;
+}
+
+.post-block:nth-child(odd) {
+  margin-bottom: 0.5em;
+}
+
+.wall-post {
+  margin: 0;
+}
+
+.username {
+  color: #026cb6;
+  font-size: 1.2em;
+  border-bottom: 1px solid #bbb;
+  margin-bottom: 5px;
+}
+
+.date {
+  color: #59632e;
+  font-size: 0.8em;
+  text-align: right;
+}
+
+/*
+ * #######
+ * UserAccount
+ * #######
+*/
+.intro-user-account {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  border-bottom: 3px double #bbb;
+  border-top: 3px double #bbb;
+}
+
+.todays-date {
+  color: #481155;
+  font-size: 0.8em;
+}
+
+.cross-container {
+  margin-bottom: 13px;
+  display: flex;
+  justify-content: space-around;
+}
+
+.wall-nav {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  padding-bottom: 1em;
+  border-bottom: 3px double #bbb;
+}
+
+/*
+ * #######
+ * Cross, AddFriend
+ * #######
+*/
+.form-container {
+  position: relative;
+  overflow: hidden;
+  width: 200px;
+  height: 65px;
+  display: flex;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.share {
+  position: relative;
+  cursor: pointer;
+  border-radius: 50%;
+  border: 1px solid deepPink;
+  height: 52px;
+  width: 52px;
+  transition: all 1s;
+  display: grid;
+  place-content: center;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+.share > span > i {
+  color: #be4bdb;
+}
+
+.rotate-to-hide {
+  transform: rotateX(90deg);
+}
+
+.the-form {
+  position: absolute;
+  top: -50px;
+  transition: top 1s;
+}
+
+.slide-down {
+  top: 0 !important;
+  z-index: 1;
+}
+
+/*
+ * #######
+ * WallBtn
+ * #######
+ */
+.wall-button {
+  padding: 0.3em 2em;
+  border: 1px solid #ccc;
+}
+
+.wall-button:not(.this-btn) {
+  cursor: pointer;
+}
+
+.this-btn {
+  background: #ca8ef5;
+}
+
+/*
+ * #######
+ * TheWall
+ * #######
+*/
+.the-wall {
+  max-width: 345px;
+  margin: 1em auto 0;
+}
+
+/*
+ * #######
+ * YourMsg
+ * #######
+ */
+.your-msg-wall {
+  max-width: 345px;
+  border-left: 1px solid #bbb;
+  border-right: 1px solid #bbb;
+  margin: auto;
+}
+
+.your-msg-wall:last-child {
+  border-bottom: 1px solid #bbb;
+}
+
+.your-msg {
+  padding: 10px;
+}
+
+.your-msg:not(:last-child) {
+  border-bottom: 1px solid #bbb;
+}
+
+.your-msg,
+.post {
+  word-break: break-all;
+}
+
+.your-msg-post,
+.your-msg-date {
+  margin: 0;
+}
+
+/*
+ * #######
+ * Friend
+ * #######
+ */
+.friend-item {
+  cursor: pointer;
+}
+
+.unfollow {
+  margin-left: 1em;
+  font-size: 0.8em;
+  color: #333;
+}
+
+@media (max-width: 736px) {
+  /*
+   * #######
+   * App
+   * #######
+  */
+  .Modal {
+    left: 20%;
+    right: 20%;
   }
-  to {
-    transform: rotate(360deg);
+  
+  .flex-row-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .flex-row-item:not(:last-child) {
+    padding-right: 0;
+    border-right: none;
+  }
+  
+  .flex-row-item:nth-child(1) {
+    border-bottom: 1px solid rgb(194, 194, 194);
+  }
+  
+  .close {
+    position: absolute;
+    right: 10px;
+    top: -10px;
+  }
+}
+
+@media (max-width: 500px) {
+  /*
+   * #######
+   * App
+   * #######
+  */
+  .Modal {
+    left: 6%;
+    right: 6%;
+  }
+
+  /*
+   * #######
+   * WallBtn
+   * #######
+   */
+  .wall-button {
+    padding: 0.3em 1em;
+  }
+}
+
+@media (max-width: 414px) {
+  /*
+   * #######
+   * App
+   * #######
+  */
+  .ze-wall > h1 {
+    font-size: 1.5em;
+  }
+  
+  .flex-row-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .flex-row-item:not(:last-child) {
+    padding-right: 0;
+    border-right: none;
+  }
+  
+  .flex-row-item:nth-child(1) {
+    border-bottom: 1px solid rgb(194, 194, 194);
+  }
+  
+  .close {
+    position: absolute;
+    right: 10px;
+    top: -10px;
+  }
+
+  /*
+   * #######
+   * Cross, AddFriend
+   * #######
+  */
+  .form-container {
+    width: 180px;
+  }
+  
+  .slide-down {
+    width: 170px;
+  }
+  
+  .slide-down > form > input {
+    width: 155px;
+  }
+  
+  .the-form > form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /*
+   * #######
+   * WallBtn
+   * #######
+   */
+  .wall-button {
+    width: 100%;
+    text-align: center;
+  }
+  
+  .wall-button:not(:last-child) {
+    margin-bottom: 3px;
   }
 }
