@@ -54,13 +54,6 @@ class App extends React.Component {
     const name = e.target.newUserName.value;
     if (this.state.boolPotential) {
       this.props.addUser(name);
-      // this.props.collections = [
-      //   ...this.props.collections,
-      //   {
-      //     user: name,
-      //     posts: []
-      //   }
-      // ];
 
       this.setState(
         {
@@ -133,10 +126,10 @@ class App extends React.Component {
        */
       let friendsPosts = [];
       if (this.props.collections[idx].hasOwnProperty("friends")) {
-        this.props.collections[idx].friends.map(friendsName => {
+        this.props.collections[idx].friends.forEach(friendsName => {
           let friendIdx = this.getColIdx(friendsName);
           let eachPosts = this.props.collections[friendIdx].posts;
-          eachPosts.map(ea => {
+          eachPosts.forEach(ea => {
             ea.user = friendsName;
           });
           friendsPosts = [...friendsPosts, ...eachPosts];
@@ -226,8 +219,8 @@ class App extends React.Component {
               {this.props.lastTen.length > 0 ? (
                   lT.slice(0)
                   .reverse()
-                  .map(e => (
-                    <div className="post-block">
+                  .map((e, i) => (
+                    <div key={i} className="post-block">
                       <h3 className="wall-post username">
                         {this.props.collections[e.uId].user}
                       </h3>

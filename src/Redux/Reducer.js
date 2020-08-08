@@ -1,5 +1,13 @@
 // @ts-nocheck
-import { ADD_USER, SHIFT_LAST_TEN, PUSH_LAST_TEN, SEND_POST } from "./ActionType";
+import {
+  ADD_USER,
+  SHIFT_LAST_TEN,
+  PUSH_LAST_TEN,
+  SEND_POST,
+  REMOVE_FRIEND,
+  CREATE_AND_ADD_FRIEND,
+  ADD_FRIEND
+} from "./ActionType";
 
 const initialState = {
   collections: [
@@ -59,27 +67,25 @@ const initialState = {
   ],
   lastTen: []
 };
-  
+
 export const reducer = (state = initialState, action) => {
   switch (action.type) {
     case ADD_USER:
       const { user } = action.payload;
-      return { 
+      return {
         ...state,
         collections: [
           ...state.collections,
           {
             user,
-            posts: [],
+            posts: []
           }
         ]
-       };
+      };
     case SHIFT_LAST_TEN:
       return {
         ...state,
-        lastTen: [
-          ...state.lastTen.slice(1)
-        ]
+        lastTen: [...state.lastTen.slice(1)]
       };
     case PUSH_LAST_TEN:
       const { uId, pId } = action.payload;
@@ -89,21 +95,55 @@ export const reducer = (state = initialState, action) => {
           ...state.lastTen,
           {
             uId,
-            pId,
+            pId
           }
         ]
       };
     case SEND_POST:
       const { userId, post, date } = action.payload;
-      let updatedCollections = {...state};
-      updatedCollections.collections[userId].posts = {
+      let updatedCollections = { ...state };
+      updatedCollections.collections[userId].posts.push({
         post,
-        date,
-      };
+        date
+      });
       return {
         ...state,
         updatedCollections
-      }
+      };
+    case REMOVE_FRIEND:
+      const { urId, delIdx } = action.payload;
+      let removedFriends = { ...state };
+      removedFriends.collections[urId].friends.splice(delIdx, 1);
+      /* 
+      ADD ANOTHER REDUCER FUNCTION
+      https://redux.js.org/basics/reducers
+       */
+      return {
+        ...state,
+        ...state.collections,
+        collections: [...state.collections].forEach((e, i) => {
+          if (i === urId) {
+            ...state.collections.friends,
+            friends: [...state.collections.friends]
+          }
+        })
+      };
+    case CREATE_AND_ADD_FRIEND:
+      const { uzerId, name } = action.payload;
+      let createdFriends = { ...state };
+      createdFriends.collections[uzerId].friends = [name];
+      return {
+        ...state,
+        createdFriends
+      };
+    case ADD_FRIEND:
+      const { uzrId, friendName } = action.payload;
+      let addedFriends = { ...state };
+      addedFriends.collections[uzrId].friends.push(friendName);
+      return {
+        ...state,
+        addedFriends
+      };
     default:
       return state;
   }

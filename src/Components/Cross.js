@@ -26,7 +26,7 @@ class Cross extends React.Component {
         </div>
         <div className="the-form">
           <form onSubmit={this.props.submit}>
-            <label for="feel-like-sharing">Feel like sharing :</label>
+            <label htmlFor="feel-like-sharing">Feel like sharing :</label>
             <input id="feel-like-sharing" type="text" name="changeInput" />
           </form>
         </div>

@@ -1,18 +1,26 @@
 // @ts-nocheck
-import { ADD_USER, SHIFT_LAST_TEN, PUSH_LAST_TEN, SEND_POST } from "./ActionType";
+import {
+  ADD_USER,
+  SHIFT_LAST_TEN,
+  PUSH_LAST_TEN,
+  SEND_POST,
+  REMOVE_FRIEND,
+  CREATE_AND_ADD_FRIEND,
+  ADD_FRIEND,
+} from "./ActionType";
 
-export const addUser = (user) => {
+export const addUser = user => {
   return {
     type: ADD_USER,
     payload: {
-      user,
+      user
     }
   };
 };
 
 export const shiftLastTen = () => {
   return {
-    type: SHIFT_LAST_TEN,
+    type: SHIFT_LAST_TEN
   };
 };
 
@@ -21,7 +29,7 @@ export const pushLastTen = ({ uId, pId }) => {
     type: PUSH_LAST_TEN,
     payload: {
       uId,
-      pId,
+      pId
     }
   };
 };
@@ -32,7 +40,37 @@ export const sendPost = ({ userId, post, date }) => {
     payload: {
       userId,
       post,
-      date,
+      date
+    }
+  };
+};
+
+export const removeFriend = ({ urId, delIdx }) => {
+  return {
+    type: REMOVE_FRIEND,
+    payload: {
+      urId,
+      delIdx,
+    }
+  };
+};
+
+export const createAndAddFriend = ({ uzerId, name }) => {
+  return {
+    type: CREATE_AND_ADD_FRIEND,
+    payload: {
+      uzerId,
+      name,
+    }
+  };
+};
+
+export const addFriend = ({ uzrId, friendName }) => {
+  return {
+    type: ADD_FRIEND,
+    payload: {
+      uzrId,
+      friendName,
     }
   };
 };

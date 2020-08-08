@@ -3,7 +3,18 @@ import React from "react";
 import { connect } from "react-redux";
 import WallBtn from "./WallBtn";
 import Cross from "./Cross";
-import { sendPost, shiftLastTen, pushLastTen } from "../Redux/Action";
+import Friends from "./Friends";
+import YourMsg from "./YourMsg";
+import TheWall from "./TheWall";
+import AddFriend from "./AddFriend";
+import {
+  sendPost,
+  shiftLastTen,
+  pushLastTen,
+  removeFriend,
+  createAndAddFriend,
+  addFriend
+} from "../Redux/Action";
 
 class UserAccount extends React.Component {
   constructor(props) {
@@ -30,8 +41,8 @@ class UserAccount extends React.Component {
     };
 
     this.submitForm = this.submitForm.bind(this);
-    /*this.unfollow = this.unfollow.bind(this);
-    this.addFriend = this.addFriend.bind(this);*/
+    this.unfollow = this.unfollow.bind(this);
+    this.addFriend = this.addFriend.bind(this);
   }
 
   componentDidMount() {
@@ -96,29 +107,16 @@ class UserAccount extends React.Component {
         date: `${d}`
       };
       this.props.sendPost(postObj);
-      // this.props.collections[this.props.idx].posts = [
-      //   ...this.state.postIts,
-      //   {
-      //     post: msg,
-      //     date: `${d}`
-      //   }
-      // ];
 
       const lastTenObj = {
         uId: this.props.idx,
         pId: this.props.collections[this.props.idx].posts.length - 1
       };
       if (this.props.lastTen.length === 10) {
-        // lastTen.shift();
         this.props.shiftLastTen();
         this.props.pushLastTen(lastTenObj);
-        // lastTen.push();
       } else {
         this.props.pushLastTen(lastTenObj);
-        // lastTen.push({
-        //   uId: this.props.idx,
-        //   pId: this.props.collections[this.props.idx].posts.length - 1
-        // });
       }
       console.log("send to server");
       // clear input
@@ -138,15 +136,17 @@ class UserAccount extends React.Component {
   clickWall(btnKey) {
     this.setState({ activeIndex: btnKey });
   }
-  /*
+
   unfollow(e) {
     let fArr = this.props.collections[this.props.idx].friends;
     let unfriended = e.target.previousSibling.textContent;
-    let filteredFriends = this.state.friendlyPosts.filter((e) => {
+    let filteredFriends = this.state.friendlyPosts.filter(e => {
       return e.user !== unfriended;
     });
     let delIdx = fArr.indexOf(unfriended);
-    collections[this.props.idx].friends.splice(delIdx, 1);
+    
+    this.props.removeFriend(this.props.idx, delIdx);
+    // collections[this.props.idx].friends.splice(delIdx, 1);
     this.setState({
       friendlyPosts: [...filteredFriends]
     });
@@ -155,7 +155,7 @@ class UserAccount extends React.Component {
   getNewPosts(name) {
     let nameIdx = this.props.getIndex(name);
     let newPosts = this.props.collections[nameIdx].posts;
-    newPosts.map((ea) => {
+    newPosts.forEach(ea => {
       ea.user = name;
     });
     this.setState({
@@ -168,19 +168,28 @@ class UserAccount extends React.Component {
     const name = e.target.friendChoice.value;
     e.target.friendChoice.value = "";
     let users = [];
-    this.props.collections.forEach((e) => users.push(e.user));
+    this.props.collections.forEach(e => users.push(e.user));
     // if part of collections.user and not user itself
-    if (users.includes(name) && name !== collections[this.props.idx].user) {
+    if (
+      users.includes(name) &&
+      name !== this.props.collections[this.props.idx].user
+    ) {
       // if you were still a LOSER
-      if (!collections[this.props.idx].hasOwnProperty("friends")) {
-        collections[this.props.idx].friends = [name];
-        let newPosts = this.getNewPosts(name);
+      if (!this.props.collections[this.props.idx].hasOwnProperty("friends")) {
+        // TODO create friends key assign to array and push variable -> name
+        this.props.createAndAddFriend(this.props.idx, name)
+        // collections[this.props.idx].friends = [name];
+        this.getNewPosts(name);
       } else {
         // if not already among friends
-        let alreadyMyBFF = collections[this.props.idx].friends.includes(name);
+        let alreadyMyBFF = this.props.collections[
+          this.props.idx
+        ].friends.includes(name);
         if (!alreadyMyBFF) {
-          collections[this.props.idx].friends.push(name);
-          let newPosts = this.getNewPosts(name);
+          // TODO push variable -> name
+          this.props.addFriend(this.props.idx, name)
+          // collections[this.props.idx].friends.push(name);
+          this.getNewPosts(name);
         }
       }
     }
@@ -191,7 +200,7 @@ class UserAccount extends React.Component {
     document
       .getElementsByClassName("share")[1]
       .classList.remove("rotate-to-hide");
-  }*/
+  }
 
   render() {
     const { auth, id } = this.props;
@@ -208,7 +217,7 @@ class UserAccount extends React.Component {
             </p>
             <div className="cross-container">
               <Cross submit={this.submitForm} />
-              {/*<AddFriend addFriend={this.addFriend} />*/}
+              <AddFriend addFriend={this.addFriend} />
             </div>
 
             <nav className="wall-nav">
@@ -221,13 +230,13 @@ class UserAccount extends React.Component {
                 />
               ))}
             </nav>
-            {/* {activeIndex === 0 ? (
+            {activeIndex === 0 ? (
               <TheWall wallPosts={this.state.friendlyPosts} />
             ) : activeIndex === 1 ? (
               <YourMsg ownMsg={this.state.postIts} />
             ) : (
               <Friends friendIdx={this.props.idx} unfollow={this.unfollow} />
-            )} */}
+            )}
           </div>
         )}
       </div>
@@ -240,6 +249,8 @@ const mapStateToProps = state => state;
 export default connect(mapStateToProps, {
   sendPost,
   shiftLastTen,
-  pushLastTen
+  pushLastTen,
+  removeFriend,
+  createAndAddFriend,
+  addFriend
 })(UserAccount);
-// export default UserAccount;
