@@ -68,6 +68,23 @@ const initialState = {
   lastTen: []
 };
 
+
+const removeFriends = (state, action) => {
+  switch (action.type) {
+    case REMOVE_FRIEND:
+      const { urId, delIdx } = action.payload;
+      return state.forEach((e, i) => {
+        if (i === urId) {
+          return e.friends.filter((f, idx) => {
+            return idx !== delIdx;
+          });
+        }
+      });
+    default:
+      return state;
+  }
+};
+
 export const reducer = (state = initialState, action) => {
   switch (action.type) {
     case ADD_USER:
@@ -111,22 +128,21 @@ export const reducer = (state = initialState, action) => {
         updatedCollections
       };
     case REMOVE_FRIEND:
-      const { urId, delIdx } = action.payload;
-      let removedFriends = { ...state };
-      removedFriends.collections[urId].friends.splice(delIdx, 1);
       /* 
       ADD ANOTHER REDUCER FUNCTION
       https://redux.js.org/basics/reducers
        */
+      /*return {
+        ...state,
+        collections: removeFriends(state.collections, action)
+      };*/
+      console.log(state)
       return {
         ...state,
-        ...state.collections,
-        collections: [...state.collections].forEach((e, i) => {
-          if (i === urId) {
-            ...state.collections.friends,
-            friends: [...state.collections.friends]
-          }
-        })
+        collections: [
+          ...state.collections,
+          removeFriends(state.collections, action)
+        ]
       };
     case CREATE_AND_ADD_FRIEND:
       const { uzerId, name } = action.payload;
