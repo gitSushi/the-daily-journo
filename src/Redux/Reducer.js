@@ -113,10 +113,6 @@ export const reducer = (state = initialState, action) => {
         updatedCollections
       };
     case REMOVE_FRIEND:
-      /* 
-      ADD ANOTHER REDUCER FUNCTION
-      https://redux.js.org/basics/reducers
-       */
       const { urId, delIdx } = action.payload
       return {
         ...state,
