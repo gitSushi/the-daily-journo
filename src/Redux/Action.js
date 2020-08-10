@@ -45,7 +45,7 @@ export const sendPost = ({ userId, post, date }) => {
   };
 };
 
-export const removeFriend = ({ urId, delIdx }) => {
+export const removeFriend = ( urId, delIdx ) => {
   return {
     type: REMOVE_FRIEND,
     payload: {
@@ -55,7 +55,7 @@ export const removeFriend = ({ urId, delIdx }) => {
   };
 };
 
-export const createAndAddFriend = ({ uzerId, name }) => {
+export const createAndAddFriend = ( uzerId, name ) => {
   return {
     type: CREATE_AND_ADD_FRIEND,
     payload: {
@@ -65,7 +65,7 @@ export const createAndAddFriend = ({ uzerId, name }) => {
   };
 };
 
-export const addFriend = ({ uzrId, friendName }) => {
+export const addFriend = ( uzrId, friendName ) => {
   return {
     type: ADD_FRIEND,
     payload: {

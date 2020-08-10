@@ -146,7 +146,6 @@ class UserAccount extends React.Component {
     let delIdx = fArr.indexOf(unfriended);
     
     this.props.removeFriend(this.props.idx, delIdx);
-    // collections[this.props.idx].friends.splice(delIdx, 1);
     this.setState({
       friendlyPosts: [...filteredFriends]
     });
@@ -169,7 +168,7 @@ class UserAccount extends React.Component {
     e.target.friendChoice.value = "";
     let users = [];
     this.props.collections.forEach(e => users.push(e.user));
-    // if part of collections.user and not user itself
+    // if part of collections.user and not user themselve
     if (
       users.includes(name) &&
       name !== this.props.collections[this.props.idx].user
@@ -189,6 +188,7 @@ class UserAccount extends React.Component {
           // TODO push variable -> name
           this.props.addFriend(this.props.idx, name)
           // collections[this.props.idx].friends.push(name);
+          // console.log("name", name)
           this.getNewPosts(name);
         }
       }

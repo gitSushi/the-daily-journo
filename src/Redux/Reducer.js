@@ -65,25 +65,10 @@ const initialState = {
       ]
     }
   ],
-  lastTen: []
+  lastTen: [],
+  currentUser: ""
 };
 
-
-const removeFriends = (state, action) => {
-  switch (action.type) {
-    case REMOVE_FRIEND:
-      const { urId, delIdx } = action.payload;
-      return state.forEach((e, i) => {
-        if (i === urId) {
-          return e.friends.filter((f, idx) => {
-            return idx !== delIdx;
-          });
-        }
-      });
-    default:
-      return state;
-  }
-};
 
 export const reducer = (state = initialState, action) => {
   switch (action.type) {
@@ -132,20 +117,27 @@ export const reducer = (state = initialState, action) => {
       ADD ANOTHER REDUCER FUNCTION
       https://redux.js.org/basics/reducers
        */
-      /*return {
-        ...state,
-        collections: removeFriends(state.collections, action)
-      };*/
-      console.log(state)
+      const { urId, delIdx } = action.payload
       return {
         ...state,
         collections: [
-          ...state.collections,
-          removeFriends(state.collections, action)
+          ...state.collections.map((col, idx) => {
+            if(idx === urId){
+              return {
+                ...col,
+                friends: [
+                  ...col.friends.filter((fr, id) => id !== delIdx)
+                ]
+              }
+            }
+            return col
+          })
         ]
       };
     case CREATE_AND_ADD_FRIEND:
       const { uzerId, name } = action.payload;
+      console.log("uzerId", uzerId)
+      console.log("name", name)
       let createdFriends = { ...state };
       createdFriends.collections[uzerId].friends = [name];
       return {

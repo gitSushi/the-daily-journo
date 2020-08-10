@@ -108,6 +108,7 @@ class App extends React.Component {
   }
 
   getColIdx(name) {
+    console.log(this.props)
     return this.props.collections.findIndex(col => {
       return col.user === name;
     });
