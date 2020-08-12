@@ -1,5 +1,7 @@
 // @ts-nocheck
 import {
+  CURRENT_USER,
+  CLEAR_USER,
   ADD_USER,
   SHIFT_LAST_TEN,
   PUSH_LAST_TEN,
@@ -8,6 +10,22 @@ import {
   CREATE_AND_ADD_FRIEND,
   ADD_FRIEND,
 } from "./ActionType";
+
+
+export const logCurrentUser = user => {
+  return {
+    type: CURRENT_USER,
+    payload: {
+      user
+    }
+  };
+};
+
+export const clearCurrentUser = () => {
+  return {
+    type: CLEAR_USER,
+  };
+};
 
 export const addUser = user => {
   return {

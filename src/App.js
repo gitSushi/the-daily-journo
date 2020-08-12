@@ -4,14 +4,12 @@ import ReactModal from "react-modal";
 import { connect } from "react-redux";
 import "./App.css";
 import UserAccount from "./Components/UserAccount";
-import { addUser } from "./Redux/Action";
+import { addUser, logCurrentUser, clearCurrentUser } from "./Redux/Action";
 
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      auth: false,
-      id: "admin",
       usersPosts: [],
       friendsPosts: [],
       idx: -1,
@@ -33,12 +31,8 @@ class App extends React.Component {
   }
 
   logOut() {
-    this.setState(
-      {
-        auth: !this.state.auth
-      },
-      this.handleCloseModal()
-    );
+    this.props.clearCurrentUser()
+    this.handleCloseModal()
   }
 
   handleOpenModal() {
@@ -54,10 +48,9 @@ class App extends React.Component {
     const name = e.target.newUserName.value;
     if (this.state.boolPotential) {
       this.props.addUser(name);
-
+      this.props.logCurrentUser(name)
       this.setState(
         {
-          id: name,
           availability: ""
         },
         this.formLogIn
@@ -98,9 +91,9 @@ class App extends React.Component {
   logIn(e) {
     e.preventDefault();
     const name = e.target.userName.value;
+    this.props.logCurrentUser(name)
     this.setState(
       {
-        id: name,
         activeIndex: 0
       },
       this.formLogIn
@@ -108,14 +101,13 @@ class App extends React.Component {
   }
 
   getColIdx(name) {
-    console.log(this.props)
     return this.props.collections.findIndex(col => {
       return col.user === name;
     });
   }
 
   formLogIn() {
-    let idx = this.getColIdx(this.state.id);
+    let idx = this.getColIdx(this.props.currentUser);
 
     if (idx >= 0) {
       /*
@@ -138,7 +130,6 @@ class App extends React.Component {
       }
 
       this.setState({
-        auth: !this.state.auth,
         usersPosts: this.props.collections[idx].posts,
         friendsPosts: friendsPosts,
         idx: idx
@@ -155,6 +146,7 @@ class App extends React.Component {
 
   render() {
     let lT = this.props.lastTen
+    console.log(this.props.currentUser)
     return (
       <div>
         <nav className="title-nav">
@@ -163,7 +155,7 @@ class App extends React.Component {
             <p>You write the news</p>
           </div>
           <div className="class-btn">
-            {this.state.auth ? (
+            {this.props.currentUser !== "Anonymous" ? (
               <button onClick={this.logOut}>log out</button>
             ) : (
               <div>
@@ -211,7 +203,7 @@ class App extends React.Component {
             )}
           </div>
         </nav>
-        {this.state.auth ? (
+        {this.props.currentUser !== "Anonymous" ? (
           <UserAccount {...this.state} getIndex={this.getColIdx} />
         ) : (
           <div>
@@ -248,5 +240,5 @@ class App extends React.Component {
 
 const mapStateToProps = state => state;
 
-export default connect(mapStateToProps, { addUser })(App);
+export default connect(mapStateToProps, { logCurrentUser, clearCurrentUser, addUser })(App);
 //export default App;

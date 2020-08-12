@@ -1,5 +1,7 @@
 // @ts-nocheck
 import {
+  CURRENT_USER,
+  CLEAR_USER,
   ADD_USER,
   SHIFT_LAST_TEN,
   PUSH_LAST_TEN,
@@ -66,12 +68,21 @@ const initialState = {
     }
   ],
   lastTen: [],
-  currentUser: ""
+  currentUser: "Anonymous"
 };
-
 
 export const reducer = (state = initialState, action) => {
   switch (action.type) {
+    case CURRENT_USER:
+      return {
+        ...state,
+        currentUser: action.payload.user
+      }
+    case CLEAR_USER:
+      return {
+        ...state,
+        currentUser: "Anonymous"
+      }
     case ADD_USER:
       const { user } = action.payload;
       return {

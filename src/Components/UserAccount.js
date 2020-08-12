@@ -203,15 +203,14 @@ class UserAccount extends React.Component {
   }
 
   render() {
-    const { auth, id } = this.props;
     const { activeIndex, todaysDate } = this.state;
     return (
       <div>
-        {auth && (
+        {this.props.currentUser !== "Anonymous" && (
           <div>
             <p className="intro-user-account">
               <span>
-                Hello <span className="username">{id}</span>
+                Hello <span className="username">{this.props.currentUser}</span>
               </span>
               <span className="todays-date">{todaysDate}</span>
             </p>
