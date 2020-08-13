@@ -118,7 +118,7 @@ class UserAccount extends React.Component {
       } else {
         this.props.pushLastTen(lastTenObj);
       }
-      console.log("send to server");
+      //console.log("send to server");
       // clear input
       e.target.changeInput.value = "";
       // to update the render method
@@ -152,7 +152,9 @@ class UserAccount extends React.Component {
   }
 
   getNewPosts(name) {
-    let nameIdx = this.props.getIndex(name);
+    let nameIdx = this.props.collections.findIndex(col => {
+      return col.user === name;
+    });
     let newPosts = this.props.collections[nameIdx].posts;
     newPosts.forEach(ea => {
       ea.user = name;
@@ -167,7 +169,7 @@ class UserAccount extends React.Component {
     const name = e.target.friendChoice.value;
     e.target.friendChoice.value = "";
     let users = [];
-    this.props.collections.forEach(e => users.push(e.user));
+    this.props.collections.forEach(eachUser => users.push(eachUser.user));
     // if part of collections.user and not user themselve
     if (
       users.includes(name) &&
@@ -206,11 +208,11 @@ class UserAccount extends React.Component {
     const { activeIndex, todaysDate } = this.state;
     return (
       <div>
-        {this.props.currentUser !== "Anonymous" && (
+        {this.props.connectionStatus.connected && (
           <div>
             <p className="intro-user-account">
               <span>
-                Hello <span className="username">{this.props.currentUser}</span>
+                Hello <span className="username">{this.props.connectionStatus.currentUser}</span>
               </span>
               <span className="todays-date">{todaysDate}</span>
             </p>

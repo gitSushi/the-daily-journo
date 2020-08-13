@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React from "react";
 import ReactModal from "react-modal";
 import { connect } from "react-redux";
@@ -107,7 +106,7 @@ class App extends React.Component {
   }
 
   formLogIn() {
-    let idx = this.getColIdx(this.props.currentUser);
+    let idx = this.getColIdx(this.props.connectionStatus.currentUser);
 
     if (idx >= 0) {
       /*
@@ -146,7 +145,6 @@ class App extends React.Component {
 
   render() {
     let lT = this.props.lastTen
-    console.log(this.props.currentUser)
     return (
       <div>
         <nav className="title-nav">
@@ -155,7 +153,7 @@ class App extends React.Component {
             <p>You write the news</p>
           </div>
           <div className="class-btn">
-            {this.props.currentUser !== "Anonymous" ? (
+            {this.props.connectionStatus.connected ? (
               <button onClick={this.logOut}>log out</button>
             ) : (
               <div>
@@ -203,8 +201,8 @@ class App extends React.Component {
             )}
           </div>
         </nav>
-        {this.props.currentUser !== "Anonymous" ? (
-          <UserAccount {...this.state} getIndex={this.getColIdx} />
+        {this.props.connectionStatus.connected ? (
+          <UserAccount {...this.state} />
         ) : (
           <div>
             <h2>The Latest News</h2>

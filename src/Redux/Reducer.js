@@ -68,7 +68,10 @@ const initialState = {
     }
   ],
   lastTen: [],
-  currentUser: "Anonymous"
+  connectionStatus: {
+    currentUser: "",
+    connected: false,
+  }
 };
 
 export const reducer = (state = initialState, action) => {
@@ -76,12 +79,18 @@ export const reducer = (state = initialState, action) => {
     case CURRENT_USER:
       return {
         ...state,
-        currentUser: action.payload.user
+        connectionStatus: {
+          currentUser: action.payload.user,
+          connected: !state.connectionStatus.connected
+        }
       }
     case CLEAR_USER:
       return {
         ...state,
-        currentUser: "Anonymous"
+        connectionStatus: {
+          currentUser: "",
+          connected: !state.connectionStatus.connected
+        }
       }
     case ADD_USER:
       const { user } = action.payload;
@@ -143,8 +152,6 @@ export const reducer = (state = initialState, action) => {
       };
     case CREATE_AND_ADD_FRIEND:
       const { uzerId, name } = action.payload;
-      console.log("uzerId", uzerId)
-      console.log("name", name)
       let createdFriends = { ...state };
       createdFriends.collections[uzerId].friends = [name];
       return {
