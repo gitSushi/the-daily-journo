@@ -1,5 +1,6 @@
 //@ts-nocheck
 import React from "react";
+// import { connect } from "react-redux";
 
 class TheWall extends React.Component {
   constructor(props) {
@@ -53,4 +54,7 @@ class TheWall extends React.Component {
   }
 }
 
+// const mapStateToProps = state => state;
+
+// export default connect(mapStateToProps)(TheWall);
 export default TheWall;

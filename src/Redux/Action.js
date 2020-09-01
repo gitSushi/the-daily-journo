@@ -8,22 +8,22 @@ import {
   SEND_POST,
   REMOVE_FRIEND,
   CREATE_AND_ADD_FRIEND,
-  ADD_FRIEND,
+  ADD_FRIEND
 } from "./ActionType";
 
-
-export const logCurrentUser = user => {
+export const logCurrentUser = (user, id) => {
   return {
     type: CURRENT_USER,
     payload: {
-      user
+      user,
+      id
     }
   };
 };
 
 export const clearCurrentUser = () => {
   return {
-    type: CLEAR_USER,
+    type: CLEAR_USER
   };
 };
 
@@ -63,32 +63,32 @@ export const sendPost = ({ userId, post, date }) => {
   };
 };
 
-export const removeFriend = ( urId, delIdx ) => {
+export const removeFriend = (urId, delIdx) => {
   return {
     type: REMOVE_FRIEND,
     payload: {
       urId,
-      delIdx,
+      delIdx
     }
   };
 };
 
-export const createAndAddFriend = ( uzerId, name ) => {
+export const createAndAddFriend = (uzerId, name) => {
   return {
     type: CREATE_AND_ADD_FRIEND,
     payload: {
       uzerId,
-      name,
+      name
     }
   };
 };
 
-export const addFriend = ( uzrId, friendName ) => {
+export const addFriend = (uzrId, friendName) => {
   return {
     type: ADD_FRIEND,
     payload: {
       uzrId,
-      friendName,
+      friendName
     }
   };
 };

@@ -6,12 +6,12 @@ class Cross extends React.Component {
     super(props);
     this.state = {};
 
-    this.big = this.big.bind(this);
+    this.toggleIconInput = this.toggleIconInput.bind(this);
   }
 
   componentDidMount() {}
 
-  big() {
+  toggleIconInput() {
     document.getElementsByClassName("share")[0].classList.add("rotate-to-hide");
     document.getElementsByClassName("the-form")[0].classList.add("slide-down");
   }
@@ -19,7 +19,7 @@ class Cross extends React.Component {
   render() {
     return (
       <div className="form-container">
-        <div className="share" onClick={this.big}>
+        <div className="share" onClick={this.toggleIconInput}>
           <span>
             <i className="fas fa-pen-nib fa-2x"></i>
           </span>

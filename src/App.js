@@ -15,8 +15,8 @@ class App extends React.Component {
       showModal: false,
       availability: true,
       availabilityClass: "",
-      boolPotential: false,
-      activeIndex: 0
+      boolPotential: false
+      // activeIndex: 0
     };
 
     this.logOut = this.logOut.bind(this);
@@ -30,8 +30,8 @@ class App extends React.Component {
   }
 
   logOut() {
-    this.props.clearCurrentUser()
-    this.handleCloseModal()
+    this.props.clearCurrentUser();
+    this.handleCloseModal();
   }
 
   handleOpenModal() {
@@ -45,9 +45,12 @@ class App extends React.Component {
   signIn(e) {
     e.preventDefault();
     const name = e.target.newUserName.value;
+    console.log(this.state.boolPotential);
     if (this.state.boolPotential) {
       this.props.addUser(name);
-      this.props.logCurrentUser(name)
+      let id = this.props.collections.length;
+      this.props.logCurrentUser(name, id);
+
       this.setState(
         {
           availability: ""
@@ -89,14 +92,22 @@ class App extends React.Component {
 
   logIn(e) {
     e.preventDefault();
+    const allUsers = [];
+    this.props.collections.map(user => allUsers.push(user.user));
+    console.log(allUsers);
     const name = e.target.userName.value;
-    this.props.logCurrentUser(name)
-    this.setState(
-      {
-        activeIndex: 0
-      },
-      this.formLogIn
-    );
+    let id = this.getColIdx(name);
+    if (allUsers.includes(name)) {
+      this.props.logCurrentUser(name, id);
+      this.setState(
+        {
+          // activeIndex: 0
+        },
+        this.formLogIn
+      );
+    } else {
+      alert("You are not signed in yet");
+    }
   }
 
   getColIdx(name) {
@@ -106,6 +117,8 @@ class App extends React.Component {
   }
 
   formLogIn() {
+    console.log(this.props.connectionStatus.currentUser);
+    console.log(this.props.connectionStatus.currentUserId);
     let idx = this.getColIdx(this.props.connectionStatus.currentUser);
 
     if (idx >= 0) {
@@ -114,7 +127,7 @@ class App extends React.Component {
        * (like above but for each friends)
        * then get their posts and add it to the colPostOfUserAndFriends
        * let colPostOfUserAndFriends =
-       *  collections[idx].posts + eachPostsFromFriends
+       * collections[idx].posts + eachPostsFromFriends
        */
       let friendsPosts = [];
       if (this.props.collections[idx].hasOwnProperty("friends")) {
@@ -127,6 +140,8 @@ class App extends React.Component {
           friendsPosts = [...friendsPosts, ...eachPosts];
         });
       }
+      console.log("formLogIn friendsPosts")
+      console.log(friendsPosts)
 
       this.setState({
         usersPosts: this.props.collections[idx].posts,
@@ -144,7 +159,7 @@ class App extends React.Component {
   }
 
   render() {
-    let lT = this.props.lastTen
+    let lT = this.props.lastTen;
     return (
       <div>
         <nav className="title-nav">
@@ -208,7 +223,8 @@ class App extends React.Component {
             <h2>The Latest News</h2>
             <div className="posts-wall">
               {this.props.lastTen.length > 0 ? (
-                  lT.slice(0)
+                lT
+                  .slice(0)
                   .reverse()
                   .map((e, i) => (
                     <div key={i} className="post-block">
@@ -238,5 +254,8 @@ class App extends React.Component {
 
 const mapStateToProps = state => state;
 
-export default connect(mapStateToProps, { logCurrentUser, clearCurrentUser, addUser })(App);
-//export default App;
+export default connect(mapStateToProps, {
+  logCurrentUser,
+  clearCurrentUser,
+  addUser
+})(App);

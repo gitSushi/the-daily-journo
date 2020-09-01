@@ -38,7 +38,8 @@ const initialState = {
           post: "hardly working",
           date: "1589642862204"
         }
-      ]
+      ],
+      friends: []
     },
     {
       user: "bob",
@@ -51,7 +52,8 @@ const initialState = {
           post: "dying in winter",
           date: "1589642862204"
         }
-      ]
+      ],
+      friends: []
     },
     {
       user: "jane",
@@ -64,13 +66,15 @@ const initialState = {
           post: "till the day I die",
           date: "1590396261640"
         }
-      ]
+      ],
+      friends: []
     }
   ],
   lastTen: [],
   connectionStatus: {
     currentUser: "",
     connected: false,
+    currentUserId: -1
   }
 };
 
@@ -81,17 +85,19 @@ export const reducer = (state = initialState, action) => {
         ...state,
         connectionStatus: {
           currentUser: action.payload.user,
-          connected: !state.connectionStatus.connected
+          connected: !state.connectionStatus.connected,
+          currentUserId: action.payload.id
         }
-      }
+      };
     case CLEAR_USER:
       return {
         ...state,
         connectionStatus: {
           currentUser: "",
-          connected: !state.connectionStatus.connected
+          connected: !state.connectionStatus.connected,
+          currentUserId: -1
         }
-      }
+      };
     case ADD_USER:
       const { user } = action.payload;
       return {
@@ -100,7 +106,8 @@ export const reducer = (state = initialState, action) => {
           ...state.collections,
           {
             user,
-            posts: []
+            posts: [],
+            friends: []
           }
         ]
       };
@@ -133,20 +140,18 @@ export const reducer = (state = initialState, action) => {
         updatedCollections
       };
     case REMOVE_FRIEND:
-      const { urId, delIdx } = action.payload
+      const { urId, delIdx } = action.payload;
       return {
         ...state,
         collections: [
           ...state.collections.map((col, idx) => {
-            if(idx === urId){
+            if (idx === urId) {
               return {
                 ...col,
-                friends: [
-                  ...col.friends.filter((fr, id) => id !== delIdx)
-                ]
-              }
+                friends: [...col.friends.filter((fr, id) => id !== delIdx)]
+              };
             }
-            return col
+            return col;
           })
         ]
       };

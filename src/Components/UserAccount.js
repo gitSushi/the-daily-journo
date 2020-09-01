@@ -16,28 +16,29 @@ import {
   addFriend
 } from "../Redux/Action";
 
+const navBtns = [
+  {
+    title: "The Wall",
+    key: 0
+  },
+  {
+    title: "Your Messages",
+    key: 1
+  },
+  {
+    title: "Friends",
+    key: 2
+  }
+];
+
 class UserAccount extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       postIts: this.props.usersPosts,
       friendlyPosts: this.props.friendsPosts,
-      activeIndex: this.props.activeIndex,
-      todaysDate: "",
-      navBtns: [
-        {
-          title: "The Wall",
-          key: 0
-        },
-        {
-          title: "Your Messages",
-          key: 1
-        },
-        {
-          title: "Friends",
-          key: 2
-        }
-      ]
+      activeIndex: 0,//this.props.activeIndex
+      todaysDate: ""
     };
 
     this.submitForm = this.submitForm.bind(this);
@@ -90,8 +91,10 @@ class UserAccount extends React.Component {
       this.setState({
         postIts: this.props.usersPosts,
         friendlyPosts: this.props.friendsPosts,
-        activeIndex: this.props.activeIndex
+        //activeIndex: this.props.activeIndex
       });
+      console.log("componentDidUpdate friendlyPosts")
+      console.log(this.state.friendlyPosts)
     }
   }
 
@@ -102,15 +105,15 @@ class UserAccount extends React.Component {
       let d = Date.now();
       // mock send to server
       const postObj = {
-        userId: this.props.idx,
+        userId: this.props.connectionStatus.currentUserId,
         post: msg,
         date: `${d}`
       };
       this.props.sendPost(postObj);
 
       const lastTenObj = {
-        uId: this.props.idx,
-        pId: this.props.collections[this.props.idx].posts.length - 1
+        uId: this.props.connectionStatus.currentUserId,
+        pId: this.props.collections[this.props.connectionStatus.currentUserId].posts.length - 1
       };
       if (this.props.lastTen.length === 10) {
         this.props.shiftLastTen();
@@ -122,9 +125,9 @@ class UserAccount extends React.Component {
       // clear input
       e.target.changeInput.value = "";
       // to update the render method
-      this.setState({ postIts: this.props.collections[this.props.idx].posts });
+      this.setState({ postIts: this.props.collections[this.props.connectionStatus.currentUserId].posts });
     }
-    // slide back up the form
+    // slides the form back up
     document
       .getElementsByClassName("the-form")[0]
       .classList.remove("slide-down");
@@ -138,14 +141,14 @@ class UserAccount extends React.Component {
   }
 
   unfollow(e) {
-    let fArr = this.props.collections[this.props.idx].friends;
+    let fArr = this.props.collections[this.props.connectionStatus.currentUserId].friends;
     let unfriended = e.target.previousSibling.textContent;
     let filteredFriends = this.state.friendlyPosts.filter(e => {
       return e.user !== unfriended;
     });
     let delIdx = fArr.indexOf(unfriended);
     
-    this.props.removeFriend(this.props.idx, delIdx);
+    this.props.removeFriend(this.props.connectionStatus.currentUserId, delIdx);
     this.setState({
       friendlyPosts: [...filteredFriends]
     });
@@ -173,24 +176,19 @@ class UserAccount extends React.Component {
     // if part of collections.user and not user themselve
     if (
       users.includes(name) &&
-      name !== this.props.collections[this.props.idx].user
+      name !== this.props.collections[this.props.connectionStatus.currentUserId].user
     ) {
       // if you were still a LOSER
-      if (!this.props.collections[this.props.idx].hasOwnProperty("friends")) {
-        // TODO create friends key assign to array and push variable -> name
-        this.props.createAndAddFriend(this.props.idx, name)
-        // collections[this.props.idx].friends = [name];
+      if (!this.props.collections[this.props.connectionStatus.currentUserId].hasOwnProperty("friends")) {
+        this.props.createAndAddFriend(this.props.connectionStatus.currentUserId, name)
         this.getNewPosts(name);
       } else {
         // if not already among friends
         let alreadyMyBFF = this.props.collections[
-          this.props.idx
+          this.props.connectionStatus.currentUserId
         ].friends.includes(name);
         if (!alreadyMyBFF) {
-          // TODO push variable -> name
-          this.props.addFriend(this.props.idx, name)
-          // collections[this.props.idx].friends.push(name);
-          // console.log("name", name)
+          this.props.addFriend(this.props.connectionStatus.currentUserId, name)
           this.getNewPosts(name);
         }
       }
@@ -222,7 +220,7 @@ class UserAccount extends React.Component {
             </div>
 
             <nav className="wall-nav">
-              {this.state.navBtns.map((btn, btnIdx) => (
+              {navBtns.map((btn, btnIdx) => (
                 <WallBtn
                   key={btn.key}
                   active={btnIdx === activeIndex}
@@ -232,11 +230,15 @@ class UserAccount extends React.Component {
               ))}
             </nav>
             {activeIndex === 0 ? (
-              <TheWall wallPosts={this.state.friendlyPosts} />
+              <div>
+                {console.log("render friendlyPosts")}
+                {console.log(this.props.friendsPosts)}
+                <TheWall wallPosts={this.props.friendsPosts} />
+              </div>
             ) : activeIndex === 1 ? (
               <YourMsg ownMsg={this.state.postIts} />
             ) : (
-              <Friends friendIdx={this.props.idx} unfollow={this.unfollow} />
+              <Friends friendIdx={this.props.connectionStatus.currentUserId} unfollow={this.unfollow} />
             )}
           </div>
         )}

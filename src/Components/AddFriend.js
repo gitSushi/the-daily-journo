@@ -7,12 +7,12 @@ class AddFriend extends React.Component {
     super(props);
     this.state = {};
 
-    this.transitioning = this.transitioning.bind(this);
+    this.toggleIconInput = this.toggleIconInput.bind(this);
   }
 
   componentDidMount() {}
 
-  transitioning() {
+  toggleIconInput() {
     document.getElementsByClassName("share")[1].classList.add("rotate-to-hide");
     document.getElementsByClassName("the-form")[1].classList.add("slide-down");
   }
@@ -20,7 +20,7 @@ class AddFriend extends React.Component {
   render() {
     return (
       <div className="form-container">
-        <div className="share" onClick={this.transitioning}>
+        <div className="share" onClick={this.toggleIconInput}>
           <span>
             <i className="fas fa-user-friends fa-2x"></i>
           </span>
