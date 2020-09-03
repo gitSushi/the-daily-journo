@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/the-daily-journo/static/css/main.356da6d3.chunk.css",
+    "main.js": "/the-daily-journo/static/js/main.8df1be59.chunk.js",
+    "main.js.map": "/the-daily-journo/static/js/main.8df1be59.chunk.js.map",
+    "runtime-main.js": "/the-daily-journo/static/js/runtime-main.72dabf57.js",
+    "runtime-main.js.map": "/the-daily-journo/static/js/runtime-main.72dabf57.js.map",
+    "static/js/2.b3c437bc.chunk.js": "/the-daily-journo/static/js/2.b3c437bc.chunk.js",
+    "static/js/2.b3c437bc.chunk.js.map": "/the-daily-journo/static/js/2.b3c437bc.chunk.js.map",
+    "index.html": "/the-daily-journo/index.html",
+    "precache-manifest.c73c168fa906ce416788db1471d48e64.js": "/the-daily-journo/precache-manifest.c73c168fa906ce416788db1471d48e64.js",
+    "service-worker.js": "/the-daily-journo/service-worker.js",
+    "static/css/main.356da6d3.chunk.css.map": "/the-daily-journo/static/css/main.356da6d3.chunk.css.map",
+    "static/js/2.b3c437bc.chunk.js.LICENSE.txt": "/the-daily-journo/static/js/2.b3c437bc.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.72dabf57.js",
+    "static/js/2.b3c437bc.chunk.js",
+    "static/css/main.356da6d3.chunk.css",
+    "static/js/main.8df1be59.chunk.js"
+  ]
+}
