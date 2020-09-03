@@ -1,8 +1,8 @@
-# [The Daily Journo]()
+# [The Daily Journo](https://gitSushi.github.com/the-daily-journo)
 
 The Daily Journo, a front-end only microblogging app with a design reminiscing a newspaper.
 
-Click [here]() for the live demo
+Click [here](https://gitSushi.github.com/the-daily-journo) for the live demo
 
 ## History
 
