@@ -1,4 +1,3 @@
-// @ts-nocheck
 import {
   CURRENT_USER,
   CLEAR_USER,
@@ -7,7 +6,8 @@ import {
   PUSH_LAST_TEN,
   SEND_POST,
   REMOVE_FRIEND,
-  CREATE_AND_ADD_FRIEND,
+  UPDATE_REMOVED_FRIENDS_POSTS,
+  UPDATE_ADDED_FRIENDS_POSTS,
   ADD_FRIEND
 } from "./ActionType";
 
@@ -27,11 +27,11 @@ export const clearCurrentUser = () => {
   };
 };
 
-export const addUser = user => {
+export const addUser = (userName) => {
   return {
     type: ADD_USER,
     payload: {
-      user
+      userName
     }
   };
 };
@@ -42,12 +42,12 @@ export const shiftLastTen = () => {
   };
 };
 
-export const pushLastTen = ({ uId, pId }) => {
+export const pushLastTen = ({ userId, postId }) => {
   return {
     type: PUSH_LAST_TEN,
     payload: {
-      uId,
-      pId
+      userId,
+      postId
     }
   };
 };
@@ -63,31 +63,39 @@ export const sendPost = ({ userId, post, date }) => {
   };
 };
 
-export const removeFriend = (urId, delIdx) => {
+export const removeFriend = (userId, deletionId) => {
   return {
     type: REMOVE_FRIEND,
     payload: {
-      urId,
-      delIdx
+      userId,
+      deletionId
     }
   };
 };
 
-export const createAndAddFriend = (uzerId, name) => {
+export const updateRemovedFriendsPosts = (friendsPosts) => {
   return {
-    type: CREATE_AND_ADD_FRIEND,
+    type: UPDATE_REMOVED_FRIENDS_POSTS,
     payload: {
-      uzerId,
-      name
+      friendsPosts
     }
   };
 };
 
-export const addFriend = (uzrId, friendName) => {
+export const updateAddedFriendsPosts = (friendsPosts) => {
+  return {
+    type: UPDATE_ADDED_FRIENDS_POSTS,
+    payload: {
+      friendsPosts
+    }
+  };
+};
+
+export const addFriend = (userId, friendName) => {
   return {
     type: ADD_FRIEND,
     payload: {
-      uzrId,
+      userId,
       friendName
     }
   };

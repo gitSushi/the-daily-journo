@@ -1,15 +1,12 @@
-//@ts-nocheck
 import React from "react";
 
-class Cross extends React.Component {
+class AddPost extends React.Component {
   constructor(props) {
     super(props);
     this.state = {};
 
     this.toggleIconInput = this.toggleIconInput.bind(this);
   }
-
-  componentDidMount() {}
 
   toggleIconInput() {
     document.getElementsByClassName("share")[0].classList.add("rotate-to-hide");
@@ -35,4 +32,4 @@ class Cross extends React.Component {
   }
 }
 
-export default Cross;
+export default AddPost;

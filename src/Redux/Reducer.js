@@ -1,4 +1,3 @@
-// @ts-nocheck
 import {
   CURRENT_USER,
   CLEAR_USER,
@@ -7,14 +6,15 @@ import {
   PUSH_LAST_TEN,
   SEND_POST,
   REMOVE_FRIEND,
-  CREATE_AND_ADD_FRIEND,
+  UPDATE_REMOVED_FRIENDS_POSTS,
+  UPDATE_ADDED_FRIENDS_POSTS,
   ADD_FRIEND
 } from "./ActionType";
 
 const initialState = {
   collections: [
     {
-      user: "user",
+      userName: "user",
       posts: [
         {
           post: "still alive",
@@ -28,7 +28,7 @@ const initialState = {
       friends: ["admin", "bob"]
     },
     {
-      user: "admin",
+      userName: "admin",
       posts: [
         {
           post: "working hard or ...",
@@ -42,7 +42,7 @@ const initialState = {
       friends: []
     },
     {
-      user: "bob",
+      userName: "bob",
       posts: [
         {
           post: "singing all summer,",
@@ -56,7 +56,7 @@ const initialState = {
       friends: []
     },
     {
-      user: "jane",
+      userName: "jane",
       posts: [
         {
           post: "still looking for Tarzan ...",
@@ -71,11 +71,33 @@ const initialState = {
     }
   ],
   lastTen: [],
-  connectionStatus: {
-    currentUser: "",
-    connected: false,
-    currentUserId: -1
+  currentUser: {
+    name: "",
+    isLoggedIn: false,
+    id: -1,
+    friendsPosts: []
   }
+};
+
+const getColIdx = (collections, name) => {
+  return collections.findIndex((col) => {
+    return col.userName === name;
+  });
+};
+
+const friendsPostsReducer = (collections, id) => {
+  let friendsPosts = [];
+  if (collections[id].friends.length > 0) {
+    collections[id].friends.forEach((friendsName) => {
+      let friendIdx = getColIdx(collections, friendsName);
+      let eachPosts = collections[friendIdx].posts;
+      eachPosts.forEach((ea) => {
+        ea.userName = friendsName;
+      });
+      friendsPosts = [...friendsPosts, ...eachPosts];
+    });
+  }
+  return friendsPosts;
 };
 
 export const reducer = (state = initialState, action) => {
@@ -83,29 +105,34 @@ export const reducer = (state = initialState, action) => {
     case CURRENT_USER:
       return {
         ...state,
-        connectionStatus: {
-          currentUser: action.payload.user,
-          connected: !state.connectionStatus.connected,
-          currentUserId: action.payload.id
+        currentUser: {
+          name: action.payload.user,
+          isLoggedIn: !state.currentUser.isLoggedIn,
+          id: action.payload.id,
+          friendsPosts: friendsPostsReducer(
+            state.collections,
+            action.payload.id
+          )
         }
       };
     case CLEAR_USER:
       return {
         ...state,
-        connectionStatus: {
-          currentUser: "",
-          connected: !state.connectionStatus.connected,
-          currentUserId: -1
+        currentUser: {
+          name: "",
+          isLoggedIn: !state.currentUser.isLoggedIn,
+          id: -1,
+          friendsPosts: []
         }
       };
     case ADD_USER:
-      const { user } = action.payload;
+      const { userName } = action.payload;
       return {
         ...state,
         collections: [
           ...state.collections,
           {
-            user,
+            userName,
             posts: [],
             friends: []
           }
@@ -117,21 +144,20 @@ export const reducer = (state = initialState, action) => {
         lastTen: [...state.lastTen.slice(1)]
       };
     case PUSH_LAST_TEN:
-      const { uId, pId } = action.payload;
       return {
         ...state,
         lastTen: [
           ...state.lastTen,
           {
-            uId,
-            pId
+            userId: action.payload.userId,
+            postId: action.payload.postId
           }
         ]
       };
     case SEND_POST:
-      const { userId, post, date } = action.payload;
+      const { post, date } = action.payload;
       let updatedCollections = { ...state };
-      updatedCollections.collections[userId].posts.push({
+      updatedCollections.collections[action.payload.userId].posts.push({
         post,
         date
       });
@@ -140,33 +166,48 @@ export const reducer = (state = initialState, action) => {
         updatedCollections
       };
     case REMOVE_FRIEND:
-      const { urId, delIdx } = action.payload;
       return {
         ...state,
         collections: [
           ...state.collections.map((col, idx) => {
-            if (idx === urId) {
+            if (idx === action.payload.userId) {
               return {
                 ...col,
-                friends: [...col.friends.filter((fr, id) => id !== delIdx)]
+                friends: [
+                  ...col.friends.filter(
+                    (fr, id) => id !== action.payload.deletionId
+                  )
+                ]
               };
             }
             return col;
           })
         ]
       };
-    case CREATE_AND_ADD_FRIEND:
-      const { uzerId, name } = action.payload;
-      let createdFriends = { ...state };
-      createdFriends.collections[uzerId].friends = [name];
+    case UPDATE_REMOVED_FRIENDS_POSTS:
       return {
         ...state,
-        createdFriends
+        currentUser: {
+          ...state.currentUser,
+          friendsPosts: action.payload.friendsPosts
+        }
+      };
+    case UPDATE_ADDED_FRIENDS_POSTS:
+      return {
+        ...state,
+        currentUser: {
+          ...state.currentUser,
+          friendsPosts: [
+            ...state.currentUser.friendsPosts,
+            ...action.payload.friendsPosts
+          ]
+        }
       };
     case ADD_FRIEND:
-      const { uzrId, friendName } = action.payload;
       let addedFriends = { ...state };
-      addedFriends.collections[uzrId].friends.push(friendName);
+      addedFriends.collections[action.payload.userId].friends.push(
+        action.payload.friendName
+      );
       return {
         ...state,
         addedFriends

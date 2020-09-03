@@ -1,7 +1,9 @@
 import React from "react";
 import ReactModal from "react-modal";
 import { connect } from "react-redux";
+
 import "./App.css";
+
 import UserAccount from "./Components/UserAccount";
 import { addUser, logCurrentUser, clearCurrentUser } from "./Redux/Action";
 
@@ -9,14 +11,10 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      usersPosts: [],
-      friendsPosts: [],
-      idx: -1,
       showModal: false,
       availability: true,
       availabilityClass: "",
       boolPotential: false
-      // activeIndex: 0
     };
 
     this.logOut = this.logOut.bind(this);
@@ -25,7 +23,6 @@ class App extends React.Component {
     this.signIn = this.signIn.bind(this);
     this.availableName = this.availableName.bind(this);
     this.logIn = this.logIn.bind(this);
-    this.formLogIn = this.formLogIn.bind(this);
     this.formatTime = this.formatTime.bind(this);
   }
 
@@ -45,18 +42,14 @@ class App extends React.Component {
   signIn(e) {
     e.preventDefault();
     const name = e.target.newUserName.value;
-    console.log(this.state.boolPotential);
     if (this.state.boolPotential) {
       this.props.addUser(name);
       let id = this.props.collections.length;
       this.props.logCurrentUser(name, id);
 
-      this.setState(
-        {
-          availability: ""
-        },
-        this.formLogIn
-      );
+      this.setState({
+        availability: ""
+      });
     }
   }
 
@@ -65,10 +58,10 @@ class App extends React.Component {
     const typedIn = e.target.value;
     const toRegex = new RegExp(`^${typedIn}`);
     const potential = this.props.collections
-      .map(user => {
-        return !toRegex.test(user.user);
+      .map((user) => {
+        return !toRegex.test(user.userName);
       })
-      .every(bool => bool);
+      .every((bool) => bool);
 
     this.setState({ boolPotential: potential });
 
@@ -93,68 +86,24 @@ class App extends React.Component {
   logIn(e) {
     e.preventDefault();
     const allUsers = [];
-    this.props.collections.map(user => allUsers.push(user.user));
-    console.log(allUsers);
+    this.props.collections.map((user) => allUsers.push(user.userName));
     const name = e.target.userName.value;
     let id = this.getColIdx(name);
     if (allUsers.includes(name)) {
       this.props.logCurrentUser(name, id);
-      this.setState(
-        {
-          // activeIndex: 0
-        },
-        this.formLogIn
-      );
     } else {
       alert("You are not signed in yet");
     }
   }
 
   getColIdx(name) {
-    return this.props.collections.findIndex(col => {
-      return col.user === name;
+    return this.props.collections.findIndex((col) => {
+      return col.userName === name;
     });
   }
 
-  formLogIn() {
-    console.log(this.props.connectionStatus.currentUser);
-    console.log(this.props.connectionStatus.currentUserId);
-    let idx = this.getColIdx(this.props.connectionStatus.currentUser);
-
-    if (idx >= 0) {
-      /*
-       * get index of each collections[idx].friends from collections
-       * (like above but for each friends)
-       * then get their posts and add it to the colPostOfUserAndFriends
-       * let colPostOfUserAndFriends =
-       * collections[idx].posts + eachPostsFromFriends
-       */
-      let friendsPosts = [];
-      if (this.props.collections[idx].hasOwnProperty("friends")) {
-        this.props.collections[idx].friends.forEach(friendsName => {
-          let friendIdx = this.getColIdx(friendsName);
-          let eachPosts = this.props.collections[friendIdx].posts;
-          eachPosts.forEach(ea => {
-            ea.user = friendsName;
-          });
-          friendsPosts = [...friendsPosts, ...eachPosts];
-        });
-      }
-      console.log("formLogIn friendsPosts")
-      console.log(friendsPosts)
-
-      this.setState({
-        usersPosts: this.props.collections[idx].posts,
-        friendsPosts: friendsPosts,
-        idx: idx
-      });
-    } else {
-      alert("unrecognized user");
-    }
-  }
-
   formatTime(ms) {
-    const t = new Date(parseInt(ms));
+    const t = new Date(parseInt(ms, 10));
     return t.toDateString();
   }
 
@@ -168,7 +117,7 @@ class App extends React.Component {
             <p>You write the news</p>
           </div>
           <div className="class-btn">
-            {this.props.connectionStatus.connected ? (
+            {this.props.currentUser.isLoggedIn ? (
               <button onClick={this.logOut}>log out</button>
             ) : (
               <div>
@@ -216,8 +165,8 @@ class App extends React.Component {
             )}
           </div>
         </nav>
-        {this.props.connectionStatus.connected ? (
-          <UserAccount {...this.state} />
+        {this.props.currentUser.isLoggedIn ? (
+          <UserAccount />
         ) : (
           <div>
             <h2>The Latest News</h2>
@@ -229,14 +178,14 @@ class App extends React.Component {
                   .map((e, i) => (
                     <div key={i} className="post-block">
                       <h3 className="wall-post username">
-                        {this.props.collections[e.uId].user}
+                        {this.props.collections[e.userId].userName}
                       </h3>
                       <p className="wall-post post">
-                        {this.props.collections[e.uId].posts[e.pId].post}
+                        {this.props.collections[e.userId].posts[e.postId].post}
                       </p>
                       <p className="wall-post date">
                         {this.formatTime(
-                          this.props.collections[e.uId].posts[e.pId].date
+                          this.props.collections[e.userId].posts[e.postId].date
                         )}
                       </p>
                     </div>
@@ -252,7 +201,7 @@ class App extends React.Component {
   }
 }
 
-const mapStateToProps = state => state;
+const mapStateToProps = (state) => state;
 
 export default connect(mapStateToProps, {
   logCurrentUser,

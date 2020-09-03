@@ -1,19 +1,19 @@
-//@ts-nocheck
 import React from "react";
 import { connect } from "react-redux";
 import WallBtn from "./WallBtn";
-import Cross from "./Cross";
+import AddPost from "./AddPost";
 import Friends from "./Friends";
-import YourMsg from "./YourMsg";
-import TheWall from "./TheWall";
-import AddFriend from "./AddFriend";
+import UserWall from "./UserWall";
+import FriendsWall from "./FriendsWall";
+import FollowFriend from "./FollowFriend";
 import {
   sendPost,
   shiftLastTen,
   pushLastTen,
   removeFriend,
-  createAndAddFriend,
-  addFriend
+  addFriend,
+  updateRemovedFriendsPosts,
+  updateAddedFriendsPosts
 } from "../Redux/Action";
 
 const navBtns = [
@@ -35,15 +35,13 @@ class UserAccount extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      postIts: this.props.usersPosts,
-      friendlyPosts: this.props.friendsPosts,
-      activeIndex: 0,//this.props.activeIndex
+      activeIndex: 0,
       todaysDate: ""
     };
 
-    this.submitForm = this.submitForm.bind(this);
+    this.submitPost = this.submitPost.bind(this);
     this.unfollow = this.unfollow.bind(this);
-    this.addFriend = this.addFriend.bind(this);
+    this.methodAddFriend = this.methodAddFriend.bind(this);
   }
 
   componentDidMount() {
@@ -80,40 +78,23 @@ class UserAccount extends React.Component {
     });
   }
 
-  componentDidUpdate(prevProps) {
-    /*
-    Conventionally DO NOT MIRROR A STATE TO A PROPS !
-    Just use the props.
-    I only do it to allow the updated render when submit is used
-    */
-    if (this.props.usersPosts !== prevProps.usersPosts) {
-      // mock get from server
-      this.setState({
-        postIts: this.props.usersPosts,
-        friendlyPosts: this.props.friendsPosts,
-        //activeIndex: this.props.activeIndex
-      });
-      console.log("componentDidUpdate friendlyPosts")
-      console.log(this.state.friendlyPosts)
-    }
-  }
-
-  submitForm(e) {
+  submitPost(e) {
     e.preventDefault();
     const msg = e.target.changeInput.value;
     if (msg !== "") {
       let d = Date.now();
       // mock send to server
       const postObj = {
-        userId: this.props.connectionStatus.currentUserId,
+        userId: this.props.currentUser.id,
         post: msg,
         date: `${d}`
       };
       this.props.sendPost(postObj);
 
       const lastTenObj = {
-        uId: this.props.connectionStatus.currentUserId,
-        pId: this.props.collections[this.props.connectionStatus.currentUserId].posts.length - 1
+        userId: this.props.currentUser.id,
+        postId:
+          this.props.collections[this.props.currentUser.id].posts.length - 1
       };
       if (this.props.lastTen.length === 10) {
         this.props.shiftLastTen();
@@ -121,11 +102,7 @@ class UserAccount extends React.Component {
       } else {
         this.props.pushLastTen(lastTenObj);
       }
-      //console.log("send to server");
-      // clear input
       e.target.changeInput.value = "";
-      // to update the render method
-      this.setState({ postIts: this.props.collections[this.props.connectionStatus.currentUserId].posts });
     }
     // slides the form back up
     document
@@ -141,56 +118,46 @@ class UserAccount extends React.Component {
   }
 
   unfollow(e) {
-    let fArr = this.props.collections[this.props.connectionStatus.currentUserId].friends;
+    let fArr = this.props.collections[this.props.currentUser.id].friends;
     let unfriended = e.target.previousSibling.textContent;
-    let filteredFriends = this.state.friendlyPosts.filter(e => {
-      return e.user !== unfriended;
+    let filteredFriends = this.props.currentUser.friendsPosts.filter((e) => {
+      return e.userName !== unfriended;
     });
     let delIdx = fArr.indexOf(unfriended);
-    
-    this.props.removeFriend(this.props.connectionStatus.currentUserId, delIdx);
-    this.setState({
-      friendlyPosts: [...filteredFriends]
-    });
+
+    this.props.removeFriend(this.props.currentUser.id, delIdx);
+    this.props.updateRemovedFriendsPosts(filteredFriends);
   }
 
   getNewPosts(name) {
-    let nameIdx = this.props.collections.findIndex(col => {
-      return col.user === name;
+    let nameIdx = this.props.collections.findIndex((col) => {
+      return col.userName === name;
     });
     let newPosts = this.props.collections[nameIdx].posts;
-    newPosts.forEach(ea => {
-      ea.user = name;
+    newPosts.forEach((ea) => {
+      ea.userName = name;
     });
-    this.setState({
-      friendlyPosts: [...this.state.friendlyPosts, ...newPosts]
-    });
+    this.props.updateAddedFriendsPosts(newPosts);
   }
 
-  addFriend(e) {
+  methodAddFriend(e) {
     e.preventDefault();
     const name = e.target.friendChoice.value;
     e.target.friendChoice.value = "";
     let users = [];
-    this.props.collections.forEach(eachUser => users.push(eachUser.user));
+    this.props.collections.forEach((eachUser) => users.push(eachUser.userName));
     // if part of collections.user and not user themselve
     if (
       users.includes(name) &&
-      name !== this.props.collections[this.props.connectionStatus.currentUserId].user
+      name !== this.props.collections[this.props.currentUser.id].userName
     ) {
-      // if you were still a LOSER
-      if (!this.props.collections[this.props.connectionStatus.currentUserId].hasOwnProperty("friends")) {
-        this.props.createAndAddFriend(this.props.connectionStatus.currentUserId, name)
+      // if not already among friends
+      let alreadyMyBFF = this.props.collections[
+        this.props.currentUser.id
+      ].friends.includes(name);
+      if (!alreadyMyBFF) {
+        this.props.addFriend(this.props.currentUser.id, name);
         this.getNewPosts(name);
-      } else {
-        // if not already among friends
-        let alreadyMyBFF = this.props.collections[
-          this.props.connectionStatus.currentUserId
-        ].friends.includes(name);
-        if (!alreadyMyBFF) {
-          this.props.addFriend(this.props.connectionStatus.currentUserId, name)
-          this.getNewPosts(name);
-        }
       }
     }
     // slide back up the form
@@ -206,17 +173,18 @@ class UserAccount extends React.Component {
     const { activeIndex, todaysDate } = this.state;
     return (
       <div>
-        {this.props.connectionStatus.connected && (
+        {this.props.currentUser.isLoggedIn && (
           <div>
             <p className="intro-user-account">
               <span>
-                Hello <span className="username">{this.props.connectionStatus.currentUser}</span>
+                Hello{" "}
+                <span className="username">{this.props.currentUser.name}</span>
               </span>
               <span className="todays-date">{todaysDate}</span>
             </p>
             <div className="cross-container">
-              <Cross submit={this.submitForm} />
-              <AddFriend addFriend={this.addFriend} />
+              <AddPost submit={this.submitPost} />
+              <FollowFriend attrAddFriend={this.methodAddFriend} />
             </div>
 
             <nav className="wall-nav">
@@ -231,14 +199,12 @@ class UserAccount extends React.Component {
             </nav>
             {activeIndex === 0 ? (
               <div>
-                {console.log("render friendlyPosts")}
-                {console.log(this.props.friendsPosts)}
-                <TheWall wallPosts={this.props.friendsPosts} />
+                <FriendsWall />
               </div>
             ) : activeIndex === 1 ? (
-              <YourMsg ownMsg={this.state.postIts} />
+              <UserWall />
             ) : (
-              <Friends friendIdx={this.props.connectionStatus.currentUserId} unfollow={this.unfollow} />
+              <Friends unfollow={this.unfollow} />
             )}
           </div>
         )}
@@ -247,13 +213,14 @@ class UserAccount extends React.Component {
   }
 }
 
-const mapStateToProps = state => state;
+const mapStateToProps = (state) => state;
 
 export default connect(mapStateToProps, {
   sendPost,
   shiftLastTen,
   pushLastTen,
   removeFriend,
-  createAndAddFriend,
-  addFriend
+  addFriend,
+  updateRemovedFriendsPosts,
+  updateAddedFriendsPosts
 })(UserAccount);

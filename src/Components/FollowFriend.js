@@ -1,16 +1,13 @@
-//@ts-nocheck
 import React from "react";
 import { connect } from "react-redux";
 
-class AddFriend extends React.Component {
+class FollowFriend extends React.Component {
   constructor(props) {
     super(props);
     this.state = {};
 
     this.toggleIconInput = this.toggleIconInput.bind(this);
   }
-
-  componentDidMount() {}
 
   toggleIconInput() {
     document.getElementsByClassName("share")[1].classList.add("rotate-to-hide");
@@ -26,7 +23,7 @@ class AddFriend extends React.Component {
           </span>
         </div>
         <div className="the-form">
-          <form onSubmit={this.props.addFriend}>
+          <form onSubmit={this.props.attrAddFriend}>
             <label htmlFor="friend-choice">Add a friend : </label>
             <input
               list="friend-data-list"
@@ -35,7 +32,7 @@ class AddFriend extends React.Component {
             />
             <datalist id="friend-data-list">
               {this.props.collections.map((e, i) => (
-                <option key={i} value={e.user} />
+                <option key={i} value={e.userName} />
               ))}
             </datalist>
           </form>
@@ -45,6 +42,6 @@ class AddFriend extends React.Component {
   }
 }
 
-const mapStateToProps = state => state;
+const mapStateToProps = (state) => state;
 
-export default connect(mapStateToProps)(AddFriend);
+export default connect(mapStateToProps)(FollowFriend);
