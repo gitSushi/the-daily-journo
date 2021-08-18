@@ -2,7 +2,7 @@
 
 The Daily Journo, a front-end only microblogging app with a design reminiscing a newspaper.
 
-Click [here](https://gitSushi.github.com/the-daily-journo) for the live demo
+Click [here](https://gitsushi.github.io/the-daily-journo/) for the live demo
 
 ## History
 
